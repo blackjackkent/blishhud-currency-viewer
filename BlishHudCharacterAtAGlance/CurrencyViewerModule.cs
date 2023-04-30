@@ -104,16 +104,8 @@ namespace BlishHudCurrencyViewer
                     Title = "User Currency",
                     BackgroundColor = new Color(0, 0, 0, 0.8f),
                     Emblem = null,
-                    
                     SavesPosition = true,
                     Id = $"{nameof(CurrencyViewerModule)}_38d37290-b5f9-447d-97ea-45b0b50e5f56",
-                    HeightSizingMode = SizingMode.AutoSize,
-                    WidthSizingMode = SizingMode.AutoSize,
-                    AutoSizePadding = new Point
-                    {
-                        X = 70,
-                        Y = 0
-                    }
                 };
                 _window = currencyViewerWindow;
             }
@@ -122,24 +114,34 @@ namespace BlishHudCurrencyViewer
 
         private void RedrawWindowContent()
         {
-            if (_displayData == null)
+            ResetDisplayData(); 
+            var selectedCurrencySettings = _currencySelectionSettings.Where(s => s.Value == true && s.EntryKey.StartsWith("currency-setting-")).ToList();
+            if (_userAccountCurrencies == null || _userAccountCurrencies.Count() == 0 || selectedCurrencySettings.Count() == 0)
             {
-                _displayData = new List<UserCurrencyDisplayData>();
-            }
-            if (_userAccountCurrencies == null)
-            {
+                _window.Height = 200;
+                _window.Width = 360;
+                _window.HeightSizingMode = SizingMode.Standard;
+                _window.WidthSizingMode = SizingMode.Standard;
+                _noCurrenciesSelectedText = new Label
+                {
+                    Text = "You have not yet selected any currencies to track! Go to BlishHud's CurrencyViewer module settings to select some.",
+                    Parent = _window,
+                    Width = 300,
+                    Height = 200,
+                    WrapText = true,
+                    VerticalAlignment = VerticalAlignment.Top
+                };
                 return;
             }
-
-            _displayData.ForEach(d =>
-            {
-                d.Name.Dispose();
-                d.Quantity.Dispose();
-            });
-            _displayData.Clear();
-            var selectedCurrencySettings = _currencySelectionSettings.Where(s => s.Value == true && s.EntryKey.StartsWith("currency-setting-")).ToList();
             for (int i = 0; i < selectedCurrencySettings.Count(); i++)
             {
+                _window.HeightSizingMode = SizingMode.AutoSize;
+                _window.WidthSizingMode = SizingMode.AutoSize;
+                _window.AutoSizePadding = new Point
+                {
+                    X = 70,
+                    Y = 0
+                };
                 var currency = selectedCurrencySettings[i];
                 var userCurrency = _userAccountCurrencies.Find(c => "currency-setting-" + c.CurrencyId == currency.EntryKey);
                 if (userCurrency == null)
@@ -173,6 +175,26 @@ namespace BlishHudCurrencyViewer
                     Quantity = quantityLabel
                 });
             }
+        }
+
+        private void ResetDisplayData()
+        {
+            if (_noCurrenciesSelectedText != null)
+            {
+                _noCurrenciesSelectedText.Dispose();
+                _noCurrenciesSelectedText = null;
+            }
+
+            if (_displayData == null)
+            {
+                _displayData = new List<UserCurrencyDisplayData>();
+            }
+            _displayData.ForEach(d =>
+            {
+                d.Name.Dispose();
+                d.Quantity.Dispose();
+            });
+            _displayData.Clear();
         }
 
         protected override void Update(GameTime gameTime)
@@ -252,5 +274,6 @@ namespace BlishHudCurrencyViewer
         List<SettingEntry<bool>> _currencySelectionSettings;
         private StandardWindow _window;
         private List<UserCurrencyDisplayData> _displayData;
+        private Label _noCurrenciesSelectedText;
     }
 }
