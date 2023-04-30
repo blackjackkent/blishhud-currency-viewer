@@ -28,17 +28,15 @@ namespace BlishHudCurrencyViewer
 
         #region Service Managers
 
-        internal SettingsManager SettingsManager => this.ModuleParameters.SettingsManager;
-        internal ContentsManager ContentsManager => this.ModuleParameters.ContentsManager;
-        internal DirectoriesManager DirectoriesManager => this.ModuleParameters.DirectoriesManager;
-        internal Gw2ApiManager Gw2ApiManager => this.ModuleParameters.Gw2ApiManager;
+        internal SettingsManager SettingsManager => ModuleParameters.SettingsManager;
+        internal ContentsManager ContentsManager => ModuleParameters.ContentsManager;
+        internal DirectoriesManager DirectoriesManager => ModuleParameters.DirectoriesManager;
+        internal Gw2ApiManager Gw2ApiManager => ModuleParameters.Gw2ApiManager;
 
         internal ApiPollingService PollingService;
 
         #endregion
 
-        // Ideally you should keep the constructor as is.
-        // Use <see cref="Initialize"/> to handle initializing the module.
         [ImportingConstructor]
         public CurrencyViewerModule([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters)
         {
@@ -46,8 +44,7 @@ namespace BlishHudCurrencyViewer
         }
 
         protected override void DefineSettings(SettingCollection settings)
-        {
-            
+        {  
         }
 
         protected override void Initialize()
@@ -55,20 +52,11 @@ namespace BlishHudCurrencyViewer
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
         }
 
-        // Some API requests need an api key. e.g. accessing account data like inventory or bank content
-        // Blish hud gives you an api subToken you can use instead of the real api key the user entered in blish.
-        // But this api subToken may not be available when your module is loaded.
-        // Because of that api requests, which require an api key, may fail when they are called in Initialize() or LoadAsync().
-        // Or the user can delete the api key or add a new api key with the wrong permissions while your module is already running.
-        // You can react to that by subscribing to Gw2ApiManager.SubtokenUpdated. This event will be raised when your module gets the api subToken or
-        // when the user adds a new API key.
         private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e)
         {
             PollingService.Invoke();
         }
         
-        // Load content and more here. This call is asynchronous, so it is a good time to run
-        // any long running steps for your module including loading resources from file or ref.
         protected override async Task LoadAsync()
         {
             try
@@ -90,7 +78,6 @@ namespace BlishHudCurrencyViewer
 
         protected override void OnModuleLoaded(EventArgs e)
         {
-            // Base handler must be called
             base.OnModuleLoaded(e);
             _cornerIcon = new CornerIcon()
             {
@@ -99,17 +86,16 @@ namespace BlishHudCurrencyViewer
                 Parent = GameService.Graphics.SpriteScreen
             };
 
-            // Show a notification in the middle of the screen when the icon is clicked
             _cornerIcon.Click += delegate
             {
                 InitializeWindowIfNotExists();
-                window.ToggleWindow();
+                _window.ToggleWindow();
             };
         }
 
         private void InitializeWindowIfNotExists()
         {
-            if (window == null)
+            if (_window == null)
             {
                 var backgroundTexture = GameService.Content.DatAssetCache.GetTextureFromAssetId(155985);
                 var currencyViewerWindow = new StandardWindow(ContentsManager.GetTexture("empty.png"), new Rectangle(40, 26, 913, 691), new Rectangle(70, 71, 839, 605))
@@ -123,54 +109,59 @@ namespace BlishHudCurrencyViewer
                     SavesPosition = true,
                     Id = $"{nameof(CurrencyViewerModule)}_38d37290-b5f9-447d-97ea-45b0b50e5f56"
                 };
+                _window = currencyViewerWindow;
+            }
+            RedrawWindowContent();
+        }
 
-                var selectedCurrencySettings = _currencySelectionSettings.Where(s => s.Value == true && s.EntryKey.StartsWith("currency-setting-")).ToList();
+        private void RedrawWindowContent()
+        {
+            if (_displayData == null)
+            {
+                _displayData = new List<UserCurrencyDisplayData>();
+            }
+            if (_userAccountCurrencies == null)
+            {
+                return;
+            }
 
-                for (int i = 0; i < selectedCurrencySettings.Count(); i++)
+            _displayData.ForEach(d =>
+            {
+                d.Name.Dispose();
+                d.Quantity.Dispose();
+            });
+            _displayData.Clear();
+            var selectedCurrencySettings = _currencySelectionSettings.Where(s => s.Value == true && s.EntryKey.StartsWith("currency-setting-")).ToList();
+            for (int i = 0; i < selectedCurrencySettings.Count(); i++)
+            {
+                var currency = selectedCurrencySettings[i];
+                var userCurrency = _userAccountCurrencies.Find(c => c.CurrencyName == currency.DisplayName);
+                var nameLabel = new Label
                 {
-                    var currency = selectedCurrencySettings[i];
-                    var userCurrency = _userAccountCurrencies.Find(c => c.CurrencyName == currency.DisplayName);
-                    var nameLabel = new Label
-                    {
-                        Text = currency.DisplayName,
-                        Parent = currencyViewerWindow,
-                        Top = i * 20,
-                        Left = 0
-                    };
-                    var quantityLabel = new Label
-                    {
-                        Text = userCurrency.CurrencyQuantity.ToString(),
-                        Parent = currencyViewerWindow,
-                        Top = i * 20,
-                        Left = 200
-                    };
-                }
-
-                //foreach(idx,currency in userSelectedCurrency)
-                //{
-                //    var nameLabel = new Label
-                //    {
-                //        Text = currencyName,
-                //        Parent = currencyViewerWindow,
-                //        Top = idx * 20,
-                //        Left = 0
-                //    };
-                //    var quantityLabel = new Label
-                //    {
-                //        Text = currencyQuantity,
-                //        Parent = currencyViewerWindow,
-                //        Top = idx * 20,
-                //        Left = 200
-                //    };
-                //}
-
-
-                window = currencyViewerWindow;
+                    Text = currency.DisplayName,
+                    Parent = _window,
+                    Top = i * 20,
+                    Left = 0
+                };
+                var quantityLabel = new Label
+                {
+                    Text = userCurrency.CurrencyQuantity.ToString(),
+                    Parent = _window,
+                    Top = i * 20,
+                    Left = 200
+                };
+                _displayData.Add(new UserCurrencyDisplayData
+                {
+                    CurrencyId = userCurrency.CurrencyId,
+                    Name = nameLabel,
+                    Quantity = quantityLabel
+                });
             }
         }
 
         protected override void Update(GameTime gameTime)
         {
+            InitializeWindowIfNotExists();
             PollingService?.Update(gameTime);
         }
 
@@ -243,6 +234,7 @@ namespace BlishHudCurrencyViewer
         List<Currency> _allInGameCurrencies;
         List<UserCurrency> _userAccountCurrencies;
         List<SettingEntry<bool>> _currencySelectionSettings;
-        private StandardWindow window;
+        private StandardWindow _window;
+        private List<UserCurrencyDisplayData> _displayData;
     }
 }
