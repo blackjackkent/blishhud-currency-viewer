@@ -141,7 +141,7 @@ namespace BlishHudCurrencyViewer
             for (int i = 0; i < selectedCurrencySettings.Count(); i++)
             {
                 var currency = selectedCurrencySettings[i];
-                var userCurrency = _userAccountCurrencies.Find(c => c.CurrencyName == currency.DisplayName);
+                var userCurrency = _userAccountCurrencies.Find(c => "currency-setting-" + c.CurrencyId == currency.EntryKey);
                 if (userCurrency == null)
                 {
                     userCurrency = new UserCurrency
@@ -199,7 +199,7 @@ namespace BlishHudCurrencyViewer
                 _allInGameCurrencies.ForEach(c =>
                     {
                         var setting = SettingsManager.ModuleSettings.DefineSetting(
-                            "currency-setting-" + c.Name,
+                            "currency-setting-" + c.Id,
                             false,
                             () => c.Name
                         );
@@ -231,6 +231,7 @@ namespace BlishHudCurrencyViewer
                         var currencyData = _allInGameCurrencies.FirstOrDefault(c => c.Id == uc.Id);
                         var userCurrency = new UserCurrency
                         {
+                            CurrencyId = uc.Id,
                             CurrencyName = currencyData?.Name,
                             CurrencyQuantity = uc.Value
                         };
