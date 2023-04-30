@@ -98,16 +98,22 @@ namespace BlishHudCurrencyViewer
             if (_window == null)
             {
                 var backgroundTexture = GameService.Content.DatAssetCache.GetTextureFromAssetId(155985);
-                var currencyViewerWindow = new StandardWindow(ContentsManager.GetTexture("empty.png"), new Rectangle(40, 26, 913, 691), new Rectangle(70, 71, 839, 605))
+                var currencyViewerWindow = new StandardWindow(ContentsManager.GetTexture("empty.png"), new Rectangle(0, 0, 300, 400), new Rectangle(10, 20, 280, 360))
                 {
                     Parent = GameService.Graphics.SpriteScreen,
                     Title = "User Currency",
                     BackgroundColor = new Color(0, 0, 0, 0.8f),
                     Emblem = null,
-                    Width = 400,
-                    Height = 200,
+                    
                     SavesPosition = true,
-                    Id = $"{nameof(CurrencyViewerModule)}_38d37290-b5f9-447d-97ea-45b0b50e5f56"
+                    Id = $"{nameof(CurrencyViewerModule)}_38d37290-b5f9-447d-97ea-45b0b50e5f56",
+                    HeightSizingMode = SizingMode.AutoSize,
+                    WidthSizingMode = SizingMode.AutoSize,
+                    AutoSizePadding = new Point
+                    {
+                        X = 70,
+                        Y = 0
+                    }
                 };
                 _window = currencyViewerWindow;
             }
@@ -136,23 +142,33 @@ namespace BlishHudCurrencyViewer
             {
                 var currency = selectedCurrencySettings[i];
                 var userCurrency = _userAccountCurrencies.Find(c => c.CurrencyName == currency.DisplayName);
+                if (userCurrency == null)
+                {
+                    userCurrency = new UserCurrency
+                    {
+                        CurrencyName = currency.DisplayName,
+                        CurrencyQuantity = 0
+                    };
+                }
                 var nameLabel = new Label
                 {
                     Text = currency.DisplayName,
                     Parent = _window,
                     Top = i * 20,
-                    Left = 0
+                    Left = 0,
+                    AutoSizeWidth = true
                 };
                 var quantityLabel = new Label
                 {
                     Text = userCurrency.CurrencyQuantity.ToString(),
                     Parent = _window,
                     Top = i * 20,
-                    Left = 200
+                    Left = 200,
+                    AutoSizeWidth = true
                 };
                 _displayData.Add(new UserCurrencyDisplayData
                 {
-                    CurrencyId = userCurrency.CurrencyId,
+                    CurrencyDisplayName = userCurrency.CurrencyName,
                     Name = nameLabel,
                     Quantity = quantityLabel
                 });
@@ -215,7 +231,6 @@ namespace BlishHudCurrencyViewer
                         var currencyData = _allInGameCurrencies.FirstOrDefault(c => c.Id == uc.Id);
                         var userCurrency = new UserCurrency
                         {
-                            CurrencyId = uc.Id,
                             CurrencyName = currencyData?.Name,
                             CurrencyQuantity = uc.Value
                         };
