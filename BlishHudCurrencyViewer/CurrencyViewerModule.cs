@@ -167,7 +167,7 @@ namespace BlishHudCurrencyViewer
                 };
                 var quantityLabel = new Label
                 {
-                    Text = userCurrency.CurrencyQuantity.ToString(),
+                    Text = userCurrency.CurrencyQuantity.ToString("N0"),
                     Parent = _window,
                     Top = (i + 2) * 20,
                     Left = 200,
