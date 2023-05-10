@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Runtime;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
-using Blish_HUD.Overlay.UI.Views;
 using Blish_HUD.Settings;
 using BlishHudCurrencyViewer.Models;
 using BlishHudCurrencyViewer.Services;
@@ -17,7 +14,6 @@ using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Color = Microsoft.Xna.Framework.Color;
-using BlishHudCurrencyViewer.Views;
 
 namespace BlishHudCurrencyViewer
 {
@@ -52,7 +48,7 @@ namespace BlishHudCurrencyViewer
             Gw2ApiManager.SubtokenUpdated += OnApiSubTokenUpdated;
         }
 
-        private async void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e)
+        private void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e)
         {
             PollingService.Invoke();
         }
@@ -81,7 +77,7 @@ namespace BlishHudCurrencyViewer
             base.OnModuleLoaded(e);
             _cornerIcon = new CornerIcon()
             {
-                Icon = GameService.Content.DatAssetCache.GetTextureFromAssetId(2594222),
+                Icon = GameService.Content.DatAssetCache.GetTextureFromAssetId(156753),
                 BasicTooltipText = $"{Name}",
                 Parent = GameService.Graphics.SpriteScreen
             };
@@ -103,7 +99,7 @@ namespace BlishHudCurrencyViewer
                     Parent = GameService.Graphics.SpriteScreen,
                     Title = "User Currency",
                     BackgroundColor = new Color(0, 0, 0, 0.8f),
-                    Emblem = null,
+                    Emblem = ContentsManager.GetTexture("empty.png"),
                     SavesPosition = true,
                     Id = $"{nameof(CurrencyViewerModule)}_38d37290-b5f9-447d-97ea-45b0b50e5f56",
                 };
@@ -122,7 +118,7 @@ namespace BlishHudCurrencyViewer
                 _window.Width = 360;
                 _window.HeightSizingMode = SizingMode.Standard;
                 _window.WidthSizingMode = SizingMode.Standard;
-                _noCurrenciesSelectedText = new Label
+                _descriptionText = new Label
                 {
                     Text = "You have not yet selected any currencies to track! Go to BlishHud's CurrencyViewer module settings to select some.",
                     Parent = _window,
@@ -133,10 +129,19 @@ namespace BlishHudCurrencyViewer
                 };
                 return;
             }
+            
+            _window.HeightSizingMode = SizingMode.AutoSize;
+            _window.WidthSizingMode = SizingMode.AutoSize;
+            _descriptionText = new Label
+            {
+                Text = "Values update once every five minutes.",
+                Parent = _window,
+                Top = 0,
+                Left = 0,
+                AutoSizeWidth = true
+            };
             for (int i = 0; i < selectedCurrencySettings.Count(); i++)
             {
-                _window.HeightSizingMode = SizingMode.AutoSize;
-                _window.WidthSizingMode = SizingMode.AutoSize;
                 _window.AutoSizePadding = new Point
                 {
                     X = 70,
@@ -156,7 +161,7 @@ namespace BlishHudCurrencyViewer
                 {
                     Text = currency.DisplayName,
                     Parent = _window,
-                    Top = i * 20,
+                    Top = (i + 2) * 20,
                     Left = 0,
                     AutoSizeWidth = true
                 };
@@ -164,7 +169,7 @@ namespace BlishHudCurrencyViewer
                 {
                     Text = userCurrency.CurrencyQuantity.ToString(),
                     Parent = _window,
-                    Top = i * 20,
+                    Top = (i + 2) * 20,
                     Left = 200,
                     AutoSizeWidth = true
                 };
@@ -179,10 +184,10 @@ namespace BlishHudCurrencyViewer
 
         private void ResetDisplayData()
         {
-            if (_noCurrenciesSelectedText != null)
+            if (_descriptionText != null)
             {
-                _noCurrenciesSelectedText.Dispose();
-                _noCurrenciesSelectedText = null;
+                _descriptionText.Dispose();
+                _descriptionText = null;
             }
 
             if (_displayData == null)
@@ -274,6 +279,6 @@ namespace BlishHudCurrencyViewer
         List<SettingEntry<bool>> _currencySelectionSettings;
         private StandardWindow _window;
         private List<UserCurrencyDisplayData> _displayData;
-        private Label _noCurrenciesSelectedText;
+        private Label _descriptionText;
     }
 }
