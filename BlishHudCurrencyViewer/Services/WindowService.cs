@@ -42,6 +42,7 @@ namespace BlishHudCurrencyViewer.Services
                 GameService.Gw2Mumble.UI.IsMapOpen;
         }
 
+
         public void Update(GameTime gameTime) {
             InitializeIfNotExists();
             if (ShouldHideWindow())

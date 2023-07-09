@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Gw2Sharp.WebApi.V2.Models;
 using BlishHudCurrencyViewer.Models;
+using Microsoft.Xna.Framework;
 
 namespace BlishHudCurrencyViewer.Services
 {
@@ -17,8 +18,9 @@ namespace BlishHudCurrencyViewer.Services
         private SettingsManager _settingsManager;
         private Logger _logger;
         private List<Currency> _allInGameCurrencies;
-        private List<SettingEntry<bool>> _currencySelectionSettings;
+        private List<SettingEntry<bool>> _availableCurrencySettings;
         private List<UserCurrency> _userAccountCurrencies;
+        private List<SettingEntry> _selectedCurrencySettings;
 
         public event EventHandler AllGameCurrencyFetched;
 
@@ -26,7 +28,9 @@ namespace BlishHudCurrencyViewer.Services
         {
             _apiManager = apiManager;
             _settingsManager = settingsManager;
-            _logger = logger;
+            _logger = logger; 
+            _selectedCurrencySettings = _settingsManager.ModuleSettings.Where(s => s.EntryKey.StartsWith("currency-setting-") && (s as SettingEntry<bool>)?.Value == true).ToList();
+
         }
         public async Task InitializeCurrencySettings()
         {
@@ -34,7 +38,7 @@ namespace BlishHudCurrencyViewer.Services
             {
                 var currencyResponse = await _apiManager.Gw2ApiClient.V2.Currencies.AllAsync();
                 _allInGameCurrencies = currencyResponse.OrderBy(c => c.Name).ToList();
-                _currencySelectionSettings = new List<SettingEntry<bool>>();
+                _availableCurrencySettings = new List<SettingEntry<bool>>();
                 _allInGameCurrencies.ForEach(c =>
                 {
                     var setting = _settingsManager.ModuleSettings.DefineSetting(
@@ -42,7 +46,7 @@ namespace BlishHudCurrencyViewer.Services
                         false,
                         () => c.Name
                     );
-                    _currencySelectionSettings.Add(setting);
+                    _availableCurrencySettings.Add(setting);
                 });
             }
             catch (Exception e)
@@ -82,5 +86,17 @@ namespace BlishHudCurrencyViewer.Services
             }
             return _userAccountCurrencies;
         }
+
+        public bool Update(GameTime gameTime)
+        {
+            var currentSelectedSettings = _settingsManager.ModuleSettings.Where(s => s.EntryKey.StartsWith("currency-setting-") && (s as SettingEntry<bool>)?.Value == true).ToList();
+            if (currentSelectedSettings != null && currentSelectedSettings.Count != _selectedCurrencySettings.Count)
+            {
+                _selectedCurrencySettings = currentSelectedSettings;
+                return true;
+            }
+            return false;
+        }
     }
+
 }

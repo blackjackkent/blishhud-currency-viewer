@@ -54,7 +54,10 @@ namespace BlishHudCurrencyViewer
 
         private void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e)
         {
-            PollingService.Invoke();
+            if (PollingService != null)
+            {
+                PollingService.Invoke();
+            }
         }
         
         protected override async Task LoadAsync()
@@ -72,8 +75,7 @@ namespace BlishHudCurrencyViewer
                 {
                     Task.Run(async () =>
                     {
-                        var userCurrencies = await CurrencyService.GetUserCurrencies();
-                        WindowService.RedrawWindowContent(userCurrencies);
+                        RefreshWindow();
                     });
                 };
             }
@@ -96,12 +98,23 @@ namespace BlishHudCurrencyViewer
             {
                 WindowService.Toggle();
             };
+            RefreshWindow();
         }
-
         protected override void Update(GameTime gameTime)
         {
             WindowService.Update(gameTime);
             PollingService?.Update(gameTime);
+            var shouldRedraw = CurrencyService.Update(gameTime);
+            if (shouldRedraw)
+            {
+                RefreshWindow();
+            }
+        }
+
+        protected async void RefreshWindow()
+        {
+            var userCurrencies = await CurrencyService.GetUserCurrencies();
+            WindowService.RedrawWindowContent(userCurrencies);
         }
 
         protected override void Unload()
@@ -109,6 +122,7 @@ namespace BlishHudCurrencyViewer
             Gw2ApiManager.SubtokenUpdated -= OnApiSubTokenUpdated;
             PollingService?.Dispose();
             WindowService?.Dispose();
+            _cornerIcon?.Dispose();
 
             ModuleInstance = null;
         }
