@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlishHudCurrencyViewer.Models
 {
-    internal class UserCurrency
+    public class UserCurrency
     {
         public int CurrencyId { get; set; }
         public string CurrencyName { get; set; }
