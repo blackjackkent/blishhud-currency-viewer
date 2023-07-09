@@ -34,24 +34,27 @@ namespace BlishHudCurrencyViewer.Services
             _isVisible = !_isVisible; 
         }
 
-        private bool ShouldShowWindow()
-        {   
-            return _isVisible &&
-                GameService.GameIntegration.Gw2Instance.Gw2IsRunning &&
-                GameService.GameIntegration.Gw2Instance.IsInGame &&
-                GameService.Gw2Mumble.IsAvailable &&
-                !GameService.Gw2Mumble.UI.IsMapOpen;
+        private bool ShouldHideWindow()
+        {      
+            return !GameService.GameIntegration.Gw2Instance.Gw2IsRunning ||
+                !GameService.GameIntegration.Gw2Instance.IsInGame ||
+                !GameService.Gw2Mumble.IsAvailable ||
+                GameService.Gw2Mumble.UI.IsMapOpen;
         }
 
         public void Update(GameTime gameTime) {
             InitializeIfNotExists();
-            if (ShouldShowWindow())
-            {
-                _window.Show();
-            } else
+            if (ShouldHideWindow())
             {
                 _window.Hide();
+                return;
             }
+            if (_isVisible)
+            {
+                _window.Show();
+                return;
+            } 
+            _window.Hide();
         }
 
         public void InitializeIfNotExists()
@@ -72,7 +75,9 @@ namespace BlishHudCurrencyViewer.Services
                 _window = currencyViewerWindow;
                 _window.Hidden += delegate
                 {
-                    _isVisible = false;
+                    if (!ShouldHideWindow()) {
+                        _isVisible = false;
+                    }
                 };
             }
         }
