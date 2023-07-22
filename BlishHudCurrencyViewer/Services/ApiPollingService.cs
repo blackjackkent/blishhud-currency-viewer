@@ -1,6 +1,5 @@
 ﻿// Adapted from https://github.com/a727891/BlishHud-Raid-Clears/blob/main/BlishHud-Raid-Clears/Features/Shared/Services/ApiPollService.cs
 
-using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 using System;
 

@@ -4,14 +4,11 @@ using Blish_HUD;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Color = Microsoft.Xna.Framework.Color;
 using Microsoft.Xna.Framework;
 using BlishHudCurrencyViewer.Models;
 using Blish_HUD.Settings;
-using System.Runtime;
 
 namespace BlishHudCurrencyViewer.Services
 {
@@ -41,7 +38,6 @@ namespace BlishHudCurrencyViewer.Services
                 !GameService.Gw2Mumble.IsAvailable ||
                 GameService.Gw2Mumble.UI.IsMapOpen;
         }
-
 
         public void Update(GameTime gameTime) {
             InitializeIfNotExists();
@@ -175,7 +171,6 @@ namespace BlishHudCurrencyViewer.Services
             });
             _displayData.Clear();
         }
-
 
         public void Dispose()
         {

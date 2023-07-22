@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
-using BlishHudCurrencyViewer.Models;
 using BlishHudCurrencyViewer.Services;
 using Gw2Sharp.WebApi.V2.Models;
 using Microsoft.Xna.Framework;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Color = Microsoft.Xna.Framework.Color;
 
 namespace BlishHudCurrencyViewer
 {
@@ -74,6 +70,7 @@ namespace BlishHudCurrencyViewer
             }
             catch (Exception e)
             {
+                Logger.Error(e, e.Message);
             }
         }
 

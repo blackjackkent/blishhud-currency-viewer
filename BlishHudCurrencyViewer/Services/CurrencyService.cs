@@ -59,6 +59,7 @@ namespace BlishHudCurrencyViewer.Services
             {
                 _logger.Debug("User has incorrect permissions.");
                 _userAccountCurrencies = new List<UserCurrency>();
+                return _userAccountCurrencies;
             }
             try
             {
