@@ -23,7 +23,7 @@ jobs:
         run: msbuild "BlishHudCurrencyViewer\BlishHudCurrencyViewer.sln" -t:rebuild -property:Configuration=Release
 
       - name: View file tree
-        run: dir BlishHudCurrencyViewer\bin
+        run: tree
 
       - name: Copy module up
         run: xcopy ".\BlishHudCurrencyViewer\bin\Release\BlishHudCurrencyViewer.bhm" .
