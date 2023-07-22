@@ -13,8 +13,8 @@
 	"contributors": [
 		{
 			"name": "BlackjackKent",
-			"username": "Gw2AccountName.1234",
-			"url": "https://github.com/yourGithubPage"
+			"username": "BlackjackKent.9826",
+			"url": "https://github.com/blackjackkent"
 		}
 	],
 
@@ -24,43 +24,11 @@
 	"api_permissions": {
 		"account": {
 			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"inventories": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"characters": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"tradingpost": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
+			"details": "Used to retrieve the in-game currencies currently owned by your account."
 		},
 		"wallet": {
 			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"unlocks": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"pvp": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"builds": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"progression": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
-		},
-		"guilds": {
-			"optional": false,
-			"details": "This will be shown as tooltip in the module settings for the api permissions. Explain here to the user why the permission is necessary for your module"
+			"details": "Used to retrieve the in-game currencies currently owned by your account."
 		}
 	}
 }

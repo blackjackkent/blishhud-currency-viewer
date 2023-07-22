@@ -23,16 +23,12 @@ namespace BlishHudCurrencyViewer
         private static readonly Logger Logger = Logger.GetLogger<CurrencyViewerModule>();
 
         #region Service Managers
-
         internal SettingsManager SettingsManager => ModuleParameters.SettingsManager;
         internal ContentsManager ContentsManager => ModuleParameters.ContentsManager;
         internal DirectoriesManager DirectoriesManager => ModuleParameters.DirectoriesManager;
         internal Gw2ApiManager Gw2ApiManager => ModuleParameters.Gw2ApiManager;
-
         internal ApiPollingService PollingService;
-
         internal WindowService WindowService;
-
         internal CurrencyService CurrencyService;
 
         #endregion
@@ -54,10 +50,7 @@ namespace BlishHudCurrencyViewer
 
         private void OnApiSubTokenUpdated(object sender, ValueEventArgs<IEnumerable<TokenPermission>> e)
         {
-            if (PollingService != null)
-            {
-                PollingService.Invoke();
-            }
+            PollingService?.Invoke();
         }
         
         protected override async Task LoadAsync()
@@ -73,7 +66,7 @@ namespace BlishHudCurrencyViewer
                 PollingService = new ApiPollingService();
                 PollingService.ApiPollingTrigger += delegate
                 {
-                    Task.Run(async () =>
+                    Task.Run(() =>
                     {
                         RefreshWindow();
                     });
