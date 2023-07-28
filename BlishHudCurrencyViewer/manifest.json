@@ -5,7 +5,7 @@
 	"package": "BlishHudCurrencyViewer.dll",
 	"manifest_version": 1,
 
-	"description": "Track your current quantities of different in-game currencies easily.",
+	"description": "Track your current quantities of different in-game currencies easily. Values update approx. every five minutes.",
 	"dependencies": {
 		"bh.blishhud": ">=1.0.0"
 	},

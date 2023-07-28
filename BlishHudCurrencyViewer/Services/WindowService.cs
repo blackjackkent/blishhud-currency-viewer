@@ -58,16 +58,17 @@ namespace BlishHudCurrencyViewer.Services
         {
             if (_window == null)
             {
-                var backgroundTexture = GameService.Content.DatAssetCache.GetTextureFromAssetId(155985);
                 var currencyViewerWindow = new StandardWindow(_contentsManager.GetTexture("empty.png"), new Rectangle(0, 0, 300, 400), new Rectangle(10, 20, 280, 360))
                 {
                     Parent = GameService.Graphics.SpriteScreen,
-                    Title = "User Currency",
-                    BackgroundColor = new Color(0, 0, 0, 0.8f),
-                    Emblem = _contentsManager.GetTexture("empty.png"),
+                    BackgroundColor = new Color(0, 0, 0, 0.6f),
+                    Title = "",
+                    Emblem = _contentsManager.GetTexture("coins.png"),
                     SavesPosition = true,
                     CanCloseWithEscape = false,
                     Id = $"{nameof(CurrencyViewerModule)}_38d37290-b5f9-447d-97ea-45b0b50e5f56",
+                    Opacity = 0.6f
+                    
                 };
                 _window = currencyViewerWindow;
                 _window.Hidden += delegate
@@ -85,8 +86,8 @@ namespace BlishHudCurrencyViewer.Services
             var selectedCurrencySettings = _settingsManager.ModuleSettings.Where(s => s.EntryKey.StartsWith("currency-setting-") && (s as SettingEntry<bool>)?.Value == true).ToList();
             if (userCurrencies == null || userCurrencies.Count() == 0 || selectedCurrencySettings.Count() == 0)
             {
-                _window.Height = 200;
-                _window.Width = 360;
+                _window.Height = 120;
+                _window.Width = 280;
                 _window.HeightSizingMode = SizingMode.Standard;
                 _window.WidthSizingMode = SizingMode.Standard;
                 _descriptionText = new Label
@@ -94,7 +95,7 @@ namespace BlishHudCurrencyViewer.Services
                     Text = "You have not yet selected any currencies to track! Go to BlishHud's CurrencyViewer module settings to select some.",
                     Parent = _window,
                     Width = 300,
-                    Height = 200,
+                    Height = 120,
                     WrapText = true,
                     VerticalAlignment = VerticalAlignment.Top
                 };
@@ -102,15 +103,6 @@ namespace BlishHudCurrencyViewer.Services
             }
 
             _window.HeightSizingMode = SizingMode.AutoSize;
-            _window.WidthSizingMode = SizingMode.AutoSize;
-            _descriptionText = new Label
-            {
-                Text = "Values update approx. every five minutes.",
-                Parent = _window,
-                Top = 0,
-                Left = 0,
-                AutoSizeWidth = true
-            };
             for (int i = 0; i < selectedCurrencySettings.Count(); i++)
             {
                 _window.AutoSizePadding = new Point
@@ -132,17 +124,18 @@ namespace BlishHudCurrencyViewer.Services
                 {
                     Text = currency.DisplayName,
                     Parent = _window,
-                    Top = (i + 2) * 20,
+                    Top = i * 20,
                     Left = 0,
-                    AutoSizeWidth = true
+                    Width = 150,
+                    WrapText = true
                 };
                 var quantityLabel = new Label
                 {
                     Text = userCurrency.CurrencyQuantity.ToString("N0"),
                     Parent = _window,
-                    Top = (i + 2) * 20,
-                    Left = 200,
-                    AutoSizeWidth = true
+                    Top = i * 20,
+                    Left = 180,
+                    AutoSizeWidth = true,
                 };
                 _displayData.Add(new UserCurrencyDisplayData
                 {

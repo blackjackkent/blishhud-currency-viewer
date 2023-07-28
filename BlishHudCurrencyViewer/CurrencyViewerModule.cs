@@ -79,7 +79,7 @@ namespace BlishHudCurrencyViewer
             base.OnModuleLoaded(e);
             _cornerIcon = new CornerIcon()
             {
-                Icon = GameService.Content.DatAssetCache.GetTextureFromAssetId(156753),
+                Icon = ContentsManager.GetTexture("coins.png"),
                 BasicTooltipText = $"{Name}",
                 Parent = GameService.Graphics.SpriteScreen
             };
