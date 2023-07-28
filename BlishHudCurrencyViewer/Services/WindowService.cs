@@ -87,14 +87,14 @@ namespace BlishHudCurrencyViewer.Services
             if (userCurrencies == null || userCurrencies.Count() == 0 || selectedCurrencySettings.Count() == 0)
             {
                 _window.Height = 120;
-                _window.Width = 280;
+                _window.Width = 220;
                 _window.HeightSizingMode = SizingMode.Standard;
                 _window.WidthSizingMode = SizingMode.Standard;
                 _descriptionText = new Label
                 {
                     Text = "You have not yet selected any currencies to track! Go to BlishHud's CurrencyViewer module settings to select some.",
                     Parent = _window,
-                    Width = 300,
+                    Width = 200,
                     Height = 120,
                     WrapText = true,
                     VerticalAlignment = VerticalAlignment.Top
@@ -120,21 +120,22 @@ namespace BlishHudCurrencyViewer.Services
                         CurrencyQuantity = 0
                     };
                 }
+                var truncatedName = currency.DisplayName.Count() > 15 ? currency.DisplayName.Substring(0, 15) + "..." : currency.DisplayName;
                 var nameLabel = new Label
                 {
-                    Text = currency.DisplayName,
+                    Text = truncatedName,
                     Parent = _window,
                     Top = i * 20,
                     Left = 0,
-                    Width = 150,
-                    WrapText = true
+                    Width = 120,
+                    BasicTooltipText = currency.DisplayName
                 };
                 var quantityLabel = new Label
                 {
                     Text = userCurrency.CurrencyQuantity.ToString("N0"),
                     Parent = _window,
                     Top = i * 20,
-                    Left = 180,
+                    Left = 130,
                     AutoSizeWidth = true,
                 };
                 _displayData.Add(new UserCurrencyDisplayData
