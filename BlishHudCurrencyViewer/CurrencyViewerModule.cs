@@ -70,7 +70,7 @@ namespace BlishHudCurrencyViewer
             }
             catch (Exception e)
             {
-                Logger.Error(e, e.Message);
+                Logger.Warn(e, e.Message);
             }
         }
 

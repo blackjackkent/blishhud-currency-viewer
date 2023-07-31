@@ -50,7 +50,7 @@ namespace BlishHudCurrencyViewer.Services
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message);
+                _logger.Warn(e.Message);
             }
         }
         public async Task<List<UserCurrency>> GetUserCurrencies()
@@ -81,7 +81,7 @@ namespace BlishHudCurrencyViewer.Services
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message);
+                _logger.Warn(e.Message);
                 _userAccountCurrencies = new List<UserCurrency>();
             }
             return _userAccountCurrencies;
