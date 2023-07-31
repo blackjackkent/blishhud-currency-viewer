@@ -6,4 +6,4 @@ This is a module for the [BlishHud](https://blishhud.com) framework of plugins f
 
 ![window](docs/bhcv-window.png)
 
-![corner icon](docs/bhcv-corner-%E2%80%ADicon.png)
+![corner icon](docs/bhcv-corner-icon.png)
